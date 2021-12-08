@@ -75,3 +75,37 @@ public:
         return s.head->data;
     }
 };
+
+string input;
+
+int main()
+{
+    getline(cin, input);
+    stack1<char> parentheses;
+
+    int i = 0;
+
+    //if parentheses is wrong print error then finish
+    bool flag = true;
+    while (input[i] && flag)
+    {
+        switch (input[i])
+        {
+        case '(':
+            parentheses.push(input[i]);
+            break;
+        case ')':
+            if (parentheses.top() == '(')
+                parentheses.pop();
+            else
+                flag = false;
+            break;
+        }
+        i++;
+    }
+    if (!flag || !parentheses.empty())
+    {
+        cout << "error\n";
+        return 0;
+    }
+}
