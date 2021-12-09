@@ -82,7 +82,10 @@ map<char, float> stof1;
 void number_spliter(int);
 int isOperator(char);
 string infixToPostfix(string);
-string calculate(string)
+string calculate(string);
+bool isOperand(char);
+string PostfixToInfix(string);
+void print_history(string);
 void preAlpha();
 
 int main()
@@ -241,6 +244,9 @@ string infixToPostfix(string infix)
 
 string calculate(string postfix)
 {
+    
+    print_history(postfix);
+
     if (postfix.size() == 1)
         return postfix;
 
@@ -334,6 +340,52 @@ string calculate(string postfix)
         }
     }
     return calculate(postfix);
+}
+
+bool isOperand(char x)
+{
+    return (x >= 'a' && x <= 'z') ||
+           (x >= 'A' && x <= 'Z');
+}
+
+string PostfixToInfix(string postfix)
+{
+    stack1 <string> s;
+    for (int i = 0; postfix[i] != '\0'; i++)
+    {
+        // Push operands
+        if (isOperand(postfix[i]))
+        {
+            string op(1, postfix[i]);
+            s.push(op);
+        }
+
+        //if postfix[i] is operator it must match  with two operands
+        else
+        {
+            string op1 = s.top();
+            s.pop();
+            string op2 = s.top();
+            s.pop();
+            s.push("(" + op2 + postfix[i] +
+                   op1 + ")");
+        }
+    }
+
+    return s.top();
+}
+
+void print_history (string postfix)
+{
+    string copy_postfix = PostfixToInfix(postfix);
+    int i = 0;
+    while (copy_postfix[i] != NULL)
+    {
+        if (copy_postfix[i] >= 'A' && copy_postfix[i] <= 'Z')
+            copy_postfix.replace(i, 1, to_string((stof1[copy_postfix[i]])));
+        i++;
+    }
+    cout << copy_postfix << endl;
 }
 
 void preAlpha()
