@@ -80,6 +80,8 @@ string input;
 string alpha = "A";
 map<char, float> stof1;
 void number_spliter(int);
+int isOperator(char);
+string infixToPostfix(string);
 
 int main()
 {
@@ -135,7 +137,8 @@ int main()
         }
         i++;
     }
-    cout << input;
+
+    string postfix = infixToPostfix(input);
 }
 
 void number_spliter(int i)
@@ -167,4 +170,56 @@ void number_spliter(int i)
         alpha[0] = 'a';
     else
         alpha[0] = (char)((int)alpha[0] + 1);
+}
+
+int isOperator(char c)
+{
+    //order of operator
+    if (c == '^')
+        return 3;
+    else if (c == '/' || c == '*')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return -1;
+}
+
+string infixToPostfix(string infix)
+{
+    stack1<char> st;
+    string result;
+
+    for (int i = 0; i < infix.length(); i++)
+    {
+        char c = infix[i];
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+            result += c;
+        else if (c == '(')
+            st.push('(');
+        else if (c == ')')
+        {
+            while (st.top() != '(')
+            {
+                result += st.top();
+                st.pop();
+            }
+            st.pop();
+        }
+        else
+        {
+            while (!st.empty() && isOperator(infix[i]) <= isOperator(st.top()))
+            {
+                result += st.top();
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+    while (!st.empty())
+    {
+        result += st.top();
+        st.pop();
+    }
+    return result;
 }
