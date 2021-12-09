@@ -82,6 +82,8 @@ map<char, float> stof1;
 void number_spliter(int);
 int isOperator(char);
 string infixToPostfix(string);
+string calculate(string)
+void preAlpha();
 
 int main()
 {
@@ -139,6 +141,19 @@ int main()
     }
 
     string postfix = infixToPostfix(input);
+    postfix = calculate(postfix);
+    if (postfix.size() > 1)
+    {
+        cout << "error";
+        return 0;
+    }
+    //because if we have two char means we have a letter and operator or we have two letter without opertor
+
+    //last letter is the answer
+    preAlpha();
+    cout << stof1[alpha[0]];
+    return 0;
+
 }
 
 void number_spliter(int i)
@@ -222,4 +237,109 @@ string infixToPostfix(string infix)
         st.pop();
     }
     return result;
+}
+
+string calculate(string postfix)
+{
+    if (postfix.size() == 1)
+        return postfix;
+
+    stack1<char> postfix2;
+    int pop_count = 0;
+    int i = postfix.size();
+    i--;
+
+    //copy postfix to a stack(reverse)
+    while (i >= 0)
+    {
+        postfix2.push(postfix[i]);
+        i--;
+    }
+
+    //if postfix have 2 char means two condition
+    //1: if one of ch is '-' means we have to multiply number by -1
+    //1: else: means we have 2 operator or letters or one letters and one operator
+    if (postfix.size() == 2)
+    {
+        float number = stof1[postfix2.pop()];
+        if (postfix2.pop() == '-')
+        {
+            stof1[alpha[0]] = -1.0 * number;
+            postfix.replace(0, 2, alpha);
+            if(alpha[0] > 'Z' && alpha[0] < 'a')
+                alpha[0] = 'a';
+            else
+                alpha[0] = (char)((int)alpha[0] + 1);
+            return postfix;
+        }
+        else
+            return postfix;
+    }
+    
+
+    //letters convert to number and push in this stack
+    stack1<float> number;
+    float result;
+    //calculate two operand with one opertor and replace it  
+    while (postfix.size() > 2)
+    {
+        if ((postfix2.top() >= 'A' && postfix2.top() <= 'Z') || (postfix2.top() >= 'a' && postfix2.top() <= 'z'))
+        {
+            pop_count++;
+            number.push(stof1[postfix2.pop()]);
+        }
+        else if (postfix2.top() == '-' && number.size() == 1)
+        {
+            stof1[alpha[0]] = -1.0 * number.top();
+            postfix2.pop();
+            pop_count++;
+            postfix.replace(pop_count - 2, 2, alpha);
+            if(alpha[0] > 'Z' && alpha[0] < 'a')
+                alpha[0] = 'a';
+            else
+                alpha[0] = (char)((int)alpha[0] + 1);
+            return calculate(postfix);
+        }
+        else
+        {
+            char temp2 = postfix2.pop();
+            pop_count++;
+            switch (isOperator(temp2))
+            {
+            case 3:
+                result = pow(number.pop(), number.pop());
+                break;
+            case 2:
+                if (temp2 == '*')
+                    result = number.pop() * number.pop();
+                else
+                    result = 1.0 / (number.pop() / number.pop());
+                break;
+            case 1:
+                if (temp2 == '-')
+                    result = -1.0 * (number.pop() - number.pop());
+                else
+                    result = number.pop() + number.pop();
+                break;
+            default:
+                break;
+            }
+            stof1[alpha[0]] = result;
+            postfix.replace(pop_count - 3, 3, alpha);
+            if(alpha[0] > 'Z' && alpha[0] < 'a')
+                alpha[0] = 'a';
+            else
+                alpha[0] = (char)((int)alpha[0] + 1);
+            break;
+        }
+    }
+    return calculate(postfix);
+}
+
+void preAlpha()
+{
+    if( alpha[0] <= 'Z' || (alpha[0] > 'a' && alpha[0] <= 'z'))
+        alpha[0] = (char)((int)alpha[0] - 1);
+    else if((int)alpha[0] < (int)'a' + 1 && alpha[0] > 'Z')
+        alpha[0] = 'z';
 }
