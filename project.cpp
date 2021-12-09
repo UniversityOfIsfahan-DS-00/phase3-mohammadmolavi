@@ -77,6 +77,9 @@ public:
 };
 
 string input;
+string alpha = "A";
+map<char, float> stof1;
+void number_spliter(int);
 
 int main()
 {
@@ -108,4 +111,60 @@ int main()
         cout << "error\n";
         return 0;
     }
+    
+    i = 0;
+    input.erase(remove(input.begin(), input.end(), ' '), input.end());
+    //remove spaces in string
+
+    //convert numbers to letters for convert to postfix
+    while (input[i] != NULL)
+    {
+        if ((input[i] >= '0' && input[i] <= '9') || (input[i] == '-' && input[i + 1] >= '0' && input[i + 1] <= '9'))
+        {
+            if ((input[i] == '-' && i != 0) && (input[i - 1] >= '0' && input[i - 1] <= '9'))
+            {
+                i++;
+                continue;
+            }
+            else
+            {
+                number_spliter(i);
+                while (input[i] >= '0' && input[i] <= '9' || input[i] == '.' || input[i] == '-')
+                    i++;
+            }
+        }
+        i++;
+    }
+    cout << input;
+}
+
+void number_spliter(int i)
+{
+    int copy_i = i;
+    string num;
+    num += input[i];
+    if (input[i + 1] != NULL)
+    {
+        i++;
+        int k = 1;
+        while ((int)input[i] >= 48 && (int)input[i] <= 57 || input[i] == '.')
+        {
+            num += input[i];
+            i++;
+            k++;
+        }
+    }
+    else
+        i++;
+
+    input.replace(copy_i, i - copy_i, alpha);
+    //convert numbers to letter
+
+    stof1[alpha[0]] = stof(num);
+    //save number to map for revert when need
+
+    if (alpha[0] > 'Z' && alpha[0] < 'a')
+        alpha[0] = 'a';
+    else
+        alpha[0] = (char)((int)alpha[0] + 1);
 }
