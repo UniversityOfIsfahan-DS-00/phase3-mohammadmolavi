@@ -128,24 +128,22 @@ int main()
     {
         if ((input[i] >= '0' && input[i] <= '9') || (input[i] == '-' && input[i + 1] >= '0' && input[i + 1] <= '9'))
         {
-            if ((input[i] == '-' && i != 0) && (input[i - 1] >= '0' && input[i - 1] <= '9'))
-            {
+            if (input[i] == '-' && i != 0 && ((input[i - 1] >= 'A' && input[i - 1] <= 'z') || input[i-1] == ')'))
                 i++;
-                continue;
-            }
             else
             {
                 number_spliter(i);
                 while (input[i] >= '0' && input[i] <= '9' || input[i] == '.' || input[i] == '-')
                     i++;
             }
+            i--;
         }
         i++;
     }
 
     string postfix = infixToPostfix(input);
-    postfix = calculate(postfix);
-    if (postfix.size() > 1)
+    string answer = calculate(postfix);
+    if (answer.size() > 1)
     {
         cout << "error";
         return 0;
@@ -246,7 +244,7 @@ string calculate(string postfix)
 {
     
     print_history(postfix);
-
+    
     if (postfix.size() == 1)
         return postfix;
 
